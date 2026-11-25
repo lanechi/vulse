@@ -11,6 +11,14 @@ export interface InjectAdminArgs {
 
 export function injectVulseAdminRoutes({ injectRoute, logger, adminPath = '/admin' }: InjectAdminArgs) {
   const prefix = adminPath.replace(/\/$/, '')
+  // Default admin uses a single client-rendered application. Keep the existing
+  // route registration for custom prefixes until their hard-coded links are migrated.
+  if (prefix === '/admin') {
+    injectRoute({ pattern: prefix, entrypoint: ADMIN('spa.astro'), prerender: false })
+    injectRoute({ pattern: prefix + '/[...path]', entrypoint: ADMIN('spa.astro'), prerender: false })
+    logger.info('Vulse: injected admin SPA shell and history fallback')
+    return
+  }
   const routes: Array<{ pattern: string; file: string }> = [
     { pattern: `${prefix}`, file: 'index.astro' },
     { pattern: `${prefix}/login`, file: 'login.astro' },

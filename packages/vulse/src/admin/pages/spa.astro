@@ -1,0 +1,21 @@
+---
+import '@vulsecms/core/admin.css'
+import AdminSpa from '../components/AdminSpa.vue'
+
+// No page-specific database reads or admin HTML rendering here.
+// Authentication is enforced by middleware on direct requests and again by the data API.
+export const prerender = false
+Astro.response.headers.set('Cache-Control', 'private, no-store')
+---
+<!doctype html>
+<html lang="en" class="vulse-admin">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Vulse</title>
+  </head>
+  <body class="min-h-screen">
+    <AdminSpa client:only="vue" />
+    <noscript>JavaScript is required to use the Vulse control panel.</noscript>
+  </body>
+</html>
