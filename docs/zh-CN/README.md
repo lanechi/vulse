@@ -29,6 +29,11 @@ Vulse 是原生集成 Astro、运行于 Cloudflare 的无头内容管理系统�
 - [Schema 定义（英文）](../schema-definitions.md)：内容模型定义资料。
 - [AI 内容模型文档](ai-schema.md)：为 AI 编程工具导出模型。
 
+## 后台 SPA 与演示
+
+- [管理后台 SPA 改造](admin-spa.md)：Vue Router、客户端路由及验证清单。
+- [演示网站部署](demo-deployment.md)：GitHub Pages 静态演示及完整 Cloudflare Worker 部署说明。
+
 ## 运维
 
 - [版本升级](upgrading.md)：更新 Vulse 与数据库迁移。
