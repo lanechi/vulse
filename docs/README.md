@@ -1,5 +1,7 @@
 # Vulse documentation
 
+[简体中文文档](zh-CN/README.md) | English
+
 Vulse is an Astro-native, Cloudflare-hosted headless CMS. This is the user-facing documentation.
 
 ## Get started
