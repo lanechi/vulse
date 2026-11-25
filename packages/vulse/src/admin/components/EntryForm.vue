@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { navigateAdmin } from '../client/spa-navigation.js'
+import { navigateAdmin, navigateAdminLocale } from '../client/spa-navigation.js'
 import { computed, onMounted, ref, watch } from 'vue'
 import { adminApi, AdminApiError } from '../client/api.js'
 import { resolveActiveLocale } from '../client/active-locale.js'
@@ -239,9 +239,7 @@ async function save(publish = false) {
 
 function switchLocale(next: string) {
   if (next === activeLocale.value) return
-  const params = new URLSearchParams(window.location.search)
-  params.set('locale', next)
-  navigateAdmin(window.location.pathname + '?' + params.toString())
+  navigateAdminLocale(next)
 }
 
 async function publishNow() {

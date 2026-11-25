@@ -11,3 +11,18 @@ export function navigateAdmin(href: string): void {
   }
   window.location.href = url.href
 }
+
+/** Current route URL, also supporting the isolated hash-routed static demo. */
+export function currentAdminUrl(): URL {
+  const url = new URL(window.location.href)
+  if (!isAdminPath(url.pathname) && isAdminPath(url.hash.slice(1).split('?')[0] ?? '')) {
+    return new URL(url.hash.slice(1), url.origin)
+  }
+  return url
+}
+
+export function navigateAdminLocale(locale: string): void {
+  const url = currentAdminUrl()
+  url.searchParams.set('locale', locale)
+  navigateAdmin(url.pathname + url.search)
+}

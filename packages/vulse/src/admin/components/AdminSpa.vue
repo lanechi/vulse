@@ -1,38 +1,13 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, shallowRef } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
 import SideNav from './SideNav.vue'
 import ToastHost from './ToastHost.vue'
 import LoginForm from './LoginForm.vue'
 import TwoFactorPanel from './TwoFactorPanel.vue'
-import { matchAdminRoute, isAdminPath, type AdminPage } from '../client/spa-routes.js'
+import { RouterView, useRoute, useRouter } from 'vue-router'
+import { adminRoutes, isAdminPath, type AdminPage } from '../client/spa-routes.js'
 import { ADMIN_NAVIGATION } from '../client/spa-navigation.js'
 
-const views: Partial<Record<AdminPage, ReturnType<typeof defineAsyncComponent>>> = {
-  entries: defineAsyncComponent(() => import('./EntryList.vue')),
-  'entry-new': defineAsyncComponent(() => import('./EntryForm.vue')),
-  'entry-edit': defineAsyncComponent(() => import('./EntryEditorWithPreview.vue')),
-  revisions: defineAsyncComponent(() => import('./RevisionList.vue')),
-  users: defineAsyncComponent(() => import('./UserList.vue')),
-  'user-edit': defineAsyncComponent(() => import('./UserEditor.vue')),
-  settings: defineAsyncComponent(() => import('./SettingsForm.vue')),
-  auth: defineAsyncComponent(() => import('./AuthSettings.vue')),
-  media: defineAsyncComponent(() => import('./MediaLibrary.vue')),
-  forms: defineAsyncComponent(() => import('./FormList.vue')),
-  'form-new': defineAsyncComponent(() => import('./FormEditor.vue')),
-  'form-edit': defineAsyncComponent(() => import('./FormEditor.vue')),
-  submissions: defineAsyncComponent(() => import('./SubmissionList.vue')),
-  submission: defineAsyncComponent(() => import('./SubmissionDetail.vue')),
-  sets: defineAsyncComponent(() => import('./SetList.vue')),
-  'set-new': defineAsyncComponent(() => import('./SetEditor.vue')),
-  'set-edit': defineAsyncComponent(() => import('./SetEditor.vue')),
-  globals: defineAsyncComponent(() => import('./GlobalSetList.vue')),
-  'global-new': defineAsyncComponent(() => import('./GlobalSetEditor.vue')),
-  'global-edit': defineAsyncComponent(() => import('./GlobalSetEditor.vue')),
-  redirects: defineAsyncComponent(() => import('./RedirectList.vue')),
-  'schema-new': defineAsyncComponent(() => import('./BlueprintEditor.vue')),
-  'schema-edit': defineAsyncComponent(() => import('./BlueprintEditor.vue')),
-  'schema-import': defineAsyncComponent(() => import('./SchemaImport.vue')),
-}
 type Shell = {
   collections: { name: string; label: string; singleton?: boolean }[]
   userEmail: string
@@ -48,11 +23,11 @@ type Status = {
   bindings: Record<string, boolean>; warnings: string[]
 }
 
-const href = ref('/admin')
-const route = computed(() => matchAdminRoute(new URL(href.value, window.location.origin).pathname))
-const page = computed(() => route.value?.page)
-const view = computed(() => page.value ? views[page.value] : undefined)
-const next = computed(() => new URL(href.value, window.location.origin).searchParams.get('next') ?? '/admin')
+const router = useRouter()
+const route = useRoute()
+const href = computed(() => route.fullPath)
+const page = computed(() => adminRoutes.find(r => r.page === route.name)?.page as AdminPage | undefined)
+const next = computed(() => typeof route.query.next === 'string' ? route.query.next : '/admin')
 const shell = shallowRef<Shell | null>(null)
 const data = shallowRef<PageData | null>(null)
 const error = ref('')
@@ -79,7 +54,7 @@ async function load() {
     loading.value = false
     return
   }
-  if (!route.value) {
+  if (!page.value) {
     error.value = 'Page not found'
     loading.value = false
     return
@@ -115,17 +90,13 @@ function go(target: string, replace = false) {
     return
   }
   const path = localPath(url)
-  if (path !== localPath(new URL(window.location.href))) {
-    if (replace) history.replaceState(null, '', path)
-    else history.pushState(null, '', path)
+  if (router.resolve(path).fullPath === route.fullPath) {
+    void load()
+    return
   }
-  href.value = path
-  void load()
-  window.scrollTo(0, 0)
-}
-function onPop() {
-  href.value = localPath(new URL(window.location.href))
-  void load()
+  void (replace ? router.replace(path) : router.push(path)).catch(err => {
+    error.value = err instanceof Error ? err.message : 'Navigation failed'
+  })
 }
 function onNavigation(event: Event) {
   const target = (event as CustomEvent<{ href: string }>).detail?.href
@@ -139,21 +110,18 @@ function onClick(event: MouseEvent) {
   if (!a || a.hasAttribute('download') || (a.target && a.target !== '_self')) return
   const url = new URL(a.href, window.location.href)
   if (url.origin !== window.location.origin || !isAdminPath(url.pathname)) return
-  if (url.hash && url.pathname === location.pathname && url.search === location.search) return
+  if (url.hash && url.pathname === route.path && url.search === new URL(href.value, location.origin).search) return
   event.preventDefault()
   go(url.href)
 }
 onMounted(() => {
-  href.value = localPath(new URL(window.location.href))
-  window.addEventListener('popstate', onPop)
   window.addEventListener(ADMIN_NAVIGATION, onNavigation)
   document.addEventListener('click', onClick)
-  void load()
 })
+watch(() => route.fullPath, () => { void load() }, { immediate: true })
 onBeforeUnmount(() => {
   sequence++
   controller?.abort()
-  window.removeEventListener('popstate', onPop)
   window.removeEventListener(ADMIN_NAVIGATION, onNavigation)
   document.removeEventListener('click', onClick)
 })
@@ -230,7 +198,9 @@ onBeforeUnmount(() => {
             <a v-if="data.historyUrl" :href="data.historyUrl" class="text-sm text-zinc-600 underline">View history</a>
             <a v-if="data.previewUrl" :href="data.previewUrl" class="rounded border border-zinc-300 px-3 py-1 text-sm hover:bg-zinc-50">Preview</a>
           </div>
-          <component v-if="view" :is="view" :key="viewKey" v-bind="data.props" />
+          <RouterView v-slot="{ Component }">
+            <component v-if="Component" :is="Component" :key="viewKey" v-bind="data.props" />
+          </RouterView>
         </template>
       </template>
     </main>

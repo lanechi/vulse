@@ -1,6 +1,5 @@
 ---
 import '@vulsecms/core/admin.css'
-import AdminSpa from '../components/AdminSpa.vue'
 
 // No page-specific database reads or admin HTML rendering here.
 // Authentication is enforced by middleware on direct requests and again by the data API.
@@ -15,7 +14,22 @@ Astro.response.headers.set('Cache-Control', 'private, no-store')
     <title>Vulse</title>
   </head>
   <body class="min-h-screen">
-    <AdminSpa client:only="vue" />
+    <div id="vulse-admin-app"></div>
+    <script>
+      import { createApp } from 'vue'
+      import { createWebHistory } from 'vue-router'
+      import AdminSpa from '../components/AdminSpa.vue'
+      import { adminViews } from '../components/spa-views.js'
+      import { createAdminRouter } from '../client/spa-router.js'
+      const router = createAdminRouter(createWebHistory(), adminViews)
+      const app = createApp(AdminSpa)
+      app.use(router)
+      router.isReady().then(() => app.mount('#vulse-admin-app')).catch((err) => {
+        console.error('[vulse] admin startup failed', err)
+        const root = document.getElementById('vulse-admin-app')
+        if (root) root.textContent = 'Could not start the admin application. Please reload.'
+      })
+    </script>
     <noscript>JavaScript is required to use the Vulse control panel.</noscript>
   </body>
 </html>

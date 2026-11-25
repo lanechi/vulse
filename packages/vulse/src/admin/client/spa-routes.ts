@@ -11,7 +11,7 @@ interface RouteDefinition {
   title: string
   adminOnly?: boolean
 }
-const routes: RouteDefinition[] = [
+export const adminRoutes: RouteDefinition[] = [
   { page: 'dashboard', pattern: '/admin', title: 'Dashboard' },
   { page: 'login', pattern: '/admin/login', title: 'Sign in' },
   { page: 'entries', pattern: '/admin/collections/:name', title: 'Entries' },
@@ -51,7 +51,7 @@ export function isAdminPath(path: string): boolean {
 export function matchAdminRoute(pathname: string): AdminRoute | null {
   if (!isAdminPath(pathname)) return null
   const parts = pathname.replace(/\/+$/, '').split('/')
-  for (const route of routes) {
+  for (const route of adminRoutes) {
     const pattern = route.pattern.split('/')
     if (parts.length !== pattern.length) continue
     const params: Record<string, string> = {}

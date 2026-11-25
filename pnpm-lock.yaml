@@ -61,6 +61,9 @@ importers:
       vue:
         specifier: ^3.5.34
         version: 3.5.34(typescript@5.9.3)
+      vue-router:
+        specifier: 4.6.3
+        version: 4.6.3(vue@3.5.34(typescript@5.9.3))
     devDependencies:
       '@better-auth/utils':
         specifier: 0.4.0
@@ -80,6 +83,9 @@ importers:
       '@types/qrcode':
         specifier: ^1.5.6
         version: 1.5.6
+      '@vitejs/plugin-vue':
+        specifier: 6.0.7
+        version: 6.0.7(vite@7.3.3(@types/node@22.19.19)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.22.3))(vue@3.5.34(typescript@5.9.3))
       astro:
         specifier: ^6.3.7
         version: 6.3.7(@types/node@22.19.19)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.60.4)(tsx@4.22.3)
@@ -2366,6 +2372,9 @@ packages:
   '@vue/compiler-ssr@3.5.34':
     resolution: {integrity: sha512-cDtTHKibkThKGHH1SP+WdccquNRYQDFH6rRjQCqT9G2ltFAfoR5pUftpab/z+aM5mW9HLLVQW7hfKKQe/1GBeQ==}
 
+  '@vue/devtools-api@6.6.4':
+    resolution: {integrity: sha512-sGhTPMuXqZ1rVOk32RylztWkfXTRhuS7vgAKv0zjqk8gbsHkJ7xfFf+jbySxt7tWObEJwyKaHMikV/WGDiQm8g==}
+
   '@vue/devtools-core@8.1.2':
     resolution: {integrity: sha512-ZGGyaSBP4/+bN2Nd9ZHNYAVDRIzMw1rv2RyXWtyZlo6mQal+IDmTvKY4V+DjAEBhaXt30mHmsgYp1yXJ/2tIWg==}
     peerDependencies:
@@ -4185,6 +4194,11 @@ packages:
         optional: true
       jsdom:
         optional: true
+
+  vue-router@4.6.3:
+    resolution: {integrity: sha512-ARBedLm9YlbvQomnmq91Os7ck6efydTSpRP3nuOKCvgJOHNrhRoJDSKtee8kcL1Vf7nz6U+PMBL+hTvR3bTVQg==}
+    peerDependencies:
+      vue: ^3.5.0
 
   vue@3.5.34:
     resolution: {integrity: sha512-WdLBG9gm02OgJIG9axd5Hpx0TFLdzVgfG2evFFu8Rur5O/IoGc5cMjnjh3tPL6GnRGsYvUhBSKVPYVcxRKpMCA==}
@@ -6067,6 +6081,8 @@ snapshots:
     dependencies:
       '@vue/compiler-dom': 3.5.34
       '@vue/shared': 3.5.34
+
+  '@vue/devtools-api@6.6.4': {}
 
   '@vue/devtools-core@8.1.2(vue@3.5.34(typescript@5.9.3))':
     dependencies:
@@ -8244,6 +8260,11 @@ snapshots:
       - sugarss
       - supports-color
       - terser
+
+  vue-router@4.6.3(vue@3.5.34(typescript@5.9.3)):
+    dependencies:
+      '@vue/devtools-api': 6.6.4
+      vue: 3.5.34(typescript@5.9.3)
 
   vue@3.5.34(typescript@5.9.3):
     dependencies:
