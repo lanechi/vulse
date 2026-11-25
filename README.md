@@ -1,5 +1,7 @@
 # Vulseastro
 
+[简体中文](README.zh-CN.md) | English
+
 **Vulse** is an Astro-native, Cloudflare-hosted headless CMS. One deploy serves your public site, the admin UI at `/admin`, and the REST API at `/api/vulse/*`. Content lives in D1, assets in R2, search uses SQLite FTS5, and delivery uses Astro's Content Layer (build/sync) plus a runtime SDK (SSR / members-only content).
 
 Vulse is under heavy development. Expect bugs and features that are not yet working as expected.
