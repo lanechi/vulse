@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { navigateAdmin } from '../client/spa-navigation.js'
 import { onMounted, reactive, ref } from 'vue'
 import { adminApi } from '../client/api.js'
 import { useToast } from '../composables/toast.js'
@@ -84,7 +85,7 @@ async function deleteUser() {
   if (!confirm(`Delete user "${email.value}"? This cannot be undone.`)) return
   try {
     await adminApi.delete(`/api/vulse/users/${props.userId}`)
-    window.location.href = '/admin/users'
+    navigateAdmin('/admin/users')
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Delete failed'
   }

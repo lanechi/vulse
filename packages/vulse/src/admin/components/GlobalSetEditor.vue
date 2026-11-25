@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { navigateAdmin } from '../client/spa-navigation.js'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { adminApi, AdminApiError } from '../client/api.js'
 import { useToast } from '../composables/toast.js'
@@ -149,7 +150,7 @@ async function saveDefinition() {
     const body = { handle: handle.value, label: label.value, fields: [...fields] }
     if (isCreate.value) {
       await adminApi.post('/api/vulse/globals', body)
-      window.location.href = `/admin/settings/globals/${handle.value}`
+      navigateAdmin(`/admin/settings/globals/${handle.value}`)
     } else {
       await adminApi.put(`/api/vulse/globals/${props.handle}`, body)
       ensureContentFields()
@@ -181,7 +182,7 @@ async function saveValue() {
 async function destroy() {
   if (!props.handle || !confirm(`Delete global set "${props.handle}"?`)) return
   await adminApi.delete(`/api/vulse/globals/${props.handle}`)
-  window.location.href = '/admin/settings/globals'
+  navigateAdmin('/admin/settings/globals')
 }
 </script>
 

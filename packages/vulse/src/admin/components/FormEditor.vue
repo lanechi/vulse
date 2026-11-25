@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { navigateAdmin } from '../client/spa-navigation.js'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { adminApi, AdminApiError } from '../client/api.js'
 import { useToast } from '../composables/toast.js'
@@ -128,7 +129,7 @@ async function save() {
     const body = buildDefinition()
     if (isCreate.value) {
       await adminApi.post('/api/vulse/forms', body)
-      window.location.href = `/admin/forms/${handle.value}`
+      navigateAdmin(`/admin/forms/${handle.value}`)
     } else {
       await adminApi.put(`/api/vulse/forms/${props.handle}`, body)
       toast.success('Form saved.')
@@ -143,7 +144,7 @@ async function save() {
 async function destroy() {
   if (!props.handle || !confirm(`Delete form "${props.handle}"?`)) return
   await adminApi.delete(`/api/vulse/forms/${props.handle}`)
-  window.location.href = '/admin/forms'
+  navigateAdmin('/admin/forms')
 }
 </script>
 

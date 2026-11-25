@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { navigateAdmin } from '../client/spa-navigation.js'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { adminApi } from '../client/api.js'
 import type {
@@ -678,7 +679,7 @@ async function confirmRemoval() {
       break;
     case 'blueprint':
       await adminApi.delete(`/api/vulse/blueprints/${target.name}`)
-      window.location.href = '/admin'
+      navigateAdmin('/admin')
       break
   }
   closeRemovalDialog();
@@ -828,7 +829,7 @@ async function save() {
     if (isCreate.value) {
       await adminApi.post('/api/vulse/blueprints', payload)
       await refreshBlueprints()
-      window.location.href = `/admin/schema/${handle.value}`
+      navigateAdmin(`/admin/schema/${handle.value}`)
       return
     }
     await adminApi.patch(`/api/vulse/blueprints/${props.handle!}`, payload)
