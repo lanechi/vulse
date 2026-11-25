@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { navigateAdmin } from '../client/spa-navigation.js'
 import { onMounted, ref } from 'vue'
 import { adminApi } from '../client/api.js'
 
@@ -22,7 +23,7 @@ onMounted(async () => {
 async function destroy() {
   if (!confirm('Delete this submission?')) return
   await adminApi.delete(`/api/vulse/forms/${props.formHandle}/submissions/${props.submissionId}`)
-  window.location.href = `/admin/forms/${props.formHandle}/submissions`
+  navigateAdmin(`/admin/forms/${props.formHandle}/submissions`)
 }
 </script>
 

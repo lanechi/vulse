@@ -5,18 +5,30 @@
 此分支将默认的 `/admin` 管理后台改为 Vue 3 单页应用。公开网站继续使用 Astro SSR；不修改 D1、R2 数据库结构、Better Auth 认证系统或既有业务 API。
 
 - `admin/pages/spa.astro`：仅提供 HTML 壳及客户端 Vue 挂载点；不读取具体后台页面的数据。
-- `admin/components/AdminSpa.vue`：单一 Vue 根组件、持久侧栏、异步加载业务组件、History API 路由。
+- `admin/components/AdminSpa.vue`：单一 Vue 根组件、持久侧栏、异步加载业务组件、Vue Router 4 路由。
 - `admin/client/spa-routes.ts`：浏览器和服务器共享的路由定义，覆盖原有 28 个路由模式。
 - `admin/client/spa-navigation.ts`：客户端导航入口，旧 Astro 页面仍可回退至原有整页跳转。
 - `server/endpoints/api-vulse-admin-page.ts`：受会话及角色保护的页面初始化数据 API；每次请求验证权限，不缓存私有数据。
 
-不新增 Vue Router 或 Pinia 依赖；此阶段使用现有 Vue 和浏览器 History API，避免改变锁文件。后台业务组件继续复用 Tailwind CSS 4、Tiptap 及现有 API 客户端。
+使用 Vue Router 4.6.3 的 Web History、RouterView、路由记录及异步页面组件；同步更新 pnpm 锁文件。不引入 Pinia。后台业务组件继续复用 Tailwind CSS 4、Tiptap 及现有 API 客户端。
 
 ## 路由与部署
 
 默认 `/admin` 及 `/admin/*` 均加载同一 Astro 壳，页面切换由客户端管理；直接访问深层路径仍通过 Worker 和原认证中间件。登录及退出后保留完整页面加载以重建会话边界。公开网站和 API 路由不进入 SPA。
 
 自定义 `adminPath` 暂时保留原有 Astro 路由，不宣称解决原项目对 /admin 硬编码的问题。本方案不是独立静态文件部署的 Vite SPA；仍通过 Astro 集成和同一个 Worker 提供后台。
+
+## GitHub Pages 静态演示
+
+演示位于 `packages/vulse/demo/`，直接复用实际 Vue 后台组件与 Vue Router（Hash History），通过隔离的浏览器内存 Mock API 提供示例数据。无需真实登录，所有修改在刷新页面时重置。模拟 API 不会写入 D1、R2、发送邮件、调用真实认证或执行部署钩子。示例公开站点由 Vue 渲染，**不是 Astro SSR 的线上实例**。树形集合、导入模板、真实预览、真实认证等依赖服务器的能力不在此演示范围内。
+
+```bash
+pnpm install --frozen-lockfile
+pnpm --filter @vulsecms/core demo:dev
+pnpm --filter @vulsecms/core demo:build
+```
+
+静态输出：`packages/vulse/demo/dist/`。GitHub Pages 发布方式见 [演示网站部署](demo-deployment.md)。
 
 ## 验证步骤（尚待运行）
 
