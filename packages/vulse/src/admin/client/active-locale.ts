@@ -1,5 +1,9 @@
 function readUrlLocaleParam(): string | null {
-  const search = (globalThis as { location?: { search?: string } }).location?.search
+  const loc = (globalThis as { location?: { search?: string; pathname?: string; hash?: string } }).location
+  const hash = loc?.hash ?? ''
+  const search = !loc?.pathname?.startsWith('/admin') && hash.startsWith('#/admin')
+    ? hash.slice(hash.indexOf('?') >= 0 ? hash.indexOf('?') : hash.length)
+    : loc?.search
   if (!search) return null
   return new URLSearchParams(search).get('locale')
 }

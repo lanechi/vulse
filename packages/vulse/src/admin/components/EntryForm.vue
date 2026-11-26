@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { navigateAdmin, navigateAdminLocale } from '../client/spa-navigation.js'
 import { computed, onMounted, ref, watch } from 'vue'
 import { adminApi, AdminApiError } from '../client/api.js'
 import { resolveActiveLocale } from '../client/active-locale.js'
@@ -207,7 +208,7 @@ async function save(publish = false) {
           { locale: activeLocale.value, slug: slug.value, content: content.value, status: status.value },
         )
         syncSlugFromResponse(created.slug, requestedSlug)
-        window.location.href = `/admin/collections/${props.collection}/${props.entryId}?locale=${encodeURIComponent(activeLocale.value)}`
+        navigateAdmin(`/admin/collections/${props.collection}/${props.entryId}?locale=${encodeURIComponent(activeLocale.value)}`)
         return
       }
       const updated = await adminApi.put<{ slug: string }>(`/api/vulse/entries/${props.collection}/${props.entryId}`, body)
@@ -225,7 +226,7 @@ async function save(publish = false) {
       else body.status = status.value
       const created = await adminApi.post<{ id: string; slug: string }>(`/api/vulse/entries/${props.collection}`, body)
       syncSlugFromResponse(created.slug, requestedSlug)
-      window.location.href = `/admin/collections/${props.collection}/${created.id}?locale=${encodeURIComponent(activeLocale.value)}`
+      navigateAdmin(`/admin/collections/${props.collection}/${created.id}?locale=${encodeURIComponent(activeLocale.value)}`)
       return
     }
   } catch (e) {
@@ -238,9 +239,7 @@ async function save(publish = false) {
 
 function switchLocale(next: string) {
   if (next === activeLocale.value) return
-  const params = new URLSearchParams(window.location.search)
-  params.set('locale', next)
-  window.location.search = params.toString()
+  navigateAdminLocale(next)
 }
 
 async function publishNow() {

@@ -84,12 +84,12 @@ export const onRequest = defineMiddleware(async (ctx, next) => {
     // env unavailable outside Cloudflare runtime
   }
 
-  if (path.startsWith('/admin') && path !== '/admin/login') {
+  if ((path === '/admin' || path.startsWith('/admin/')) && path.replace(/\/+$/, '') !== '/admin/login') {
     try {
       const env = getRuntimeEnv()
       const rt = await getRuntime(env, () => registryForRequest(createDb(env.DB)), new URL(ctx.request.url).origin)
       const session = await rt.auth.api.getSession({ headers: ctx.request.headers })
-      if (!session) return ctx.redirect(`/admin/login?next=${encodeURIComponent(path)}`)
+      if (!session) return ctx.redirect(`/admin/login?next=${encodeURIComponent(path + url.search)}`)
       ;(ctx.locals as { vulseUser?: typeof session.user }).vulseUser = session.user
       const role = (session.user as { role?: string }).role
       if (role !== 'admin' && role !== 'editor') {

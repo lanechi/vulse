@@ -10,6 +10,7 @@ export interface InjectArgs {
 
 export function injectVulseRoutes({ injectRoute, logger }: InjectArgs) {
   const routes: Array<{ pattern: string; file: string }> = [
+    { pattern: '/api/vulse/admin/page', file: 'api-vulse-admin-page.js' },
     { pattern: '/api/vulse/entries/[collection]', file: 'api-vulse-entries.js' },
     { pattern: '/api/vulse/entries/[collection]/tree', file: 'api-vulse-entries-tree.js' },
     { pattern: '/api/vulse/entries/[collection]/[id]', file: 'api-vulse-entries.js' },

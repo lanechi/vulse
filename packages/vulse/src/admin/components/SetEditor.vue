@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { navigateAdmin } from '../client/spa-navigation.js'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { adminApi } from '../client/api.js'
 import type { NestedFieldDefinition } from '../../core/blueprints/definition.js'
@@ -73,10 +74,10 @@ async function save() {
     const body = { handle: handle.value, label: label.value, fields: [...fields] }
     if (isCreate.value) {
       await adminApi.post('/api/vulse/sets', body)
-      window.location.href = '/admin/settings/sets'
+      navigateAdmin('/admin/settings/sets')
     } else {
       await adminApi.patch(`/api/vulse/sets/${props.handle}`, body)
-      window.location.href = '/admin/settings/sets'
+      navigateAdmin('/admin/settings/sets')
     }
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Save failed'
@@ -88,7 +89,7 @@ async function save() {
 async function destroy() {
   if (!props.handle || !confirm(`Delete set "${props.handle}"?`)) return
   await adminApi.delete(`/api/vulse/sets/${props.handle}`)
-  window.location.href = '/admin/settings/sets'
+  navigateAdmin('/admin/settings/sets')
 }
 </script>
 

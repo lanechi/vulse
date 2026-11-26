@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, watch } from 'vue'
+import { navigateAdminLocale } from '../client/spa-navigation.js'
 import { adminApi } from '../client/api.js'
 import { resolveActiveLocale } from '../client/active-locale.js'
 import CollectionTree from './CollectionTree.vue'
@@ -51,10 +52,7 @@ function goToPage(n: number) {
 
 function switchLocale(next: string) {
   if (next === activeLocale.value) return
-  activeLocale.value = next
-  const params = new URLSearchParams(window.location.search)
-  params.set('locale', next)
-  history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`)
+  navigateAdminLocale(next)
 }
 
 onMounted(() => {

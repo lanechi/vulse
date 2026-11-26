@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { navigateAdmin } from '../client/spa-navigation.js'
 import { ref, onMounted, computed } from 'vue'
 import { adminApi, AdminApiError } from '../client/api'
 import { resolveActiveLocale } from '../client/active-locale.js'
@@ -85,7 +86,7 @@ async function restore(v: number) {
       `/api/vulse/entries/${props.collection}/${props.entryId}/revisions/${v}/restore${localeQuery()}`,
       {},
     )
-    window.location.href = `/admin/collections/${props.collection}/${props.entryId}?locale=${encodeURIComponent(activeLocale.value)}`
+    navigateAdmin(`/admin/collections/${props.collection}/${props.entryId}?locale=${encodeURIComponent(activeLocale.value)}`)
   } catch (err) {
     toast.error(err instanceof AdminApiError ? err.message : 'Failed to restore revision')
   }
